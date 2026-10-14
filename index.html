@@ -1,12 +1,1147 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kurumsal Web Sitemiz</title>
+    <title>KYK -> TÜBİTAK 2209-A İstihdam Merkezi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.4);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.7);
+        }
+        .card-transition {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-transition:hover {
+            transform: translateY(-3px);
+        }
+    </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; margin-top: 20%;">
-    <h1>Web Sitemiz Yakında Yayında!</h1>
-    <p>Kurumsal web sitemiz şu anda hazırlanmaktadır.</p>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- WhatsApp / Rapor Özeti Modal -->
+    <div id="summary-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl transform transition-all">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Koğuş Görev Emri Çıktısı</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">WhatsApp grubuna atmalık resmi TÜBİTAK görev dağılımı</p>
+                    </div>
+                </div>
+                <button onclick="closeSummaryModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <pre id="summary-text" class="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-xs sm:text-sm font-mono whitespace-pre-wrap text-slate-700 dark:text-slate-300 max-h-80 overflow-y-auto leading-relaxed"></pre>
+            <div class="mt-5 flex items-center justify-end gap-3">
+                <button onclick="closeSummaryModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                    Kapat
+                </button>
+                <button onclick="copySummaryToClipboard()" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Metni Kopyala</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation / Header -->
+    <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <!-- Brand Title -->
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-600 to-orange-500 flex items-center justify-center text-white shadow-lg shadow-rose-600/25 shrink-0">
+                        <i class="fa-solid fa-bed-pulse text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                                KYK <i class="fa-solid fa-arrow-right-long text-rose-500 mx-1 text-base"></i> TÜBİTAK İstihdam Merkezi
+                            </h1>
+                            <span class="px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-full">
+                                2209-A Seferberliği
+                            </span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                            Ranzada Reels kaydıran atıl iş gücünü bilime ve literatüre kazandırma platformu
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2.5 self-start md:self-auto flex-wrap">
+                    <button onclick="mobilizeAllIdle()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-2 transition" title="Yatan herkesi projeye kilitle">
+                        <i class="fa-solid fa-bullhorn"></i>
+                        <span>Koğuş Kalk! (Hepsini Kilitle)</span>
+                    </button>
+                    <button onclick="openSummaryModal()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-2 transition">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>Görev Emri Çıktısı</span>
+                    </button>
+                    <button onclick="toggleTheme()" id="theme-toggle-btn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Gece / Gündüz Modu">
+                        <i id="theme-icon" class="fa-solid fa-sun text-amber-400"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- 1. İSTATİSTİK KARTLARI (STATS BAR) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Stat 1: Boştaki KYK'lı Sayısı -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Boştaki KYK'lı Sayısı</p>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <h2 id="stat-idle-count" class="text-3xl font-extrabold text-amber-500">0</h2>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">kişi yatıyor</span>
+                    </div>
+                    <p id="stat-idle-sub" class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1">
+                        <i class="fa-solid fa-bed text-amber-500"></i> Ranzalar şu an dolu
+                    </p>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 text-xl">
+                    <i class="fa-solid fa-person-shelter"></i>
+                </div>
+            </div>
+
+            <!-- Stat 2: TÜBİTAK'ta Çalışanlar -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Projeye Kilitlenenler</p>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <h2 id="stat-working-count" class="text-3xl font-extrabold text-emerald-500">0</h2>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">aktif araştırmacı</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1">
+                        <i class="fa-solid fa-microscope text-emerald-500"></i> Bilim için ter döküyor
+                    </p>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 text-xl">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+            </div>
+
+            <!-- Stat 3: Açık İş Paketleri -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Açık TÜBİTAK İş Paketi</p>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <h2 id="stat-open-packages" class="text-3xl font-extrabold text-indigo-500">0 / 6</h2>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">paket sahipsiz</span>
+                    </div>
+                    <p id="stat-packages-sub" class="text-xs text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1">
+                        <i class="fa-solid fa-list-check text-indigo-500"></i> Acil amele aranıyor
+                    </p>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500 text-xl">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+            </div>
+
+            <!-- Stat 4: Koğuş Bilimsel Verimlilik -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Koğuş Verimliliği</p>
+                    <span id="stat-productivity-badge" class="text-xs font-bold px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-500">%0</span>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden my-2">
+                    <div id="stat-productivity-bar" class="bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <p id="stat-productivity-text" class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    Kettle çalışıyor, proje yatıyor...
+                </p>
+            </div>
+        </section>
+
+        <!-- MAIN GRID: LEFT (FORM + WORK PACKAGES) & RIGHT (FILTERS + CARDS) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- SOL SÜTUN: Yeni Boş Eleman Ekle Formu + İş Paketleri Durumu (4 Cols on LG) -->
+            <aside class="lg:col-span-4 space-y-6">
+
+                <!-- Yeni Boş Eleman Ekle Kartı -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-base text-slate-900 dark:text-white">Yeni Boş Eleman Ekle</h2>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Odada boş gezeni radara yakala</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="fillRandomDormMate()" class="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1" title="Rastgele komik örnek doldur">
+                            <i class="fa-solid fa-dice"></i> Rastgele
+                        </button>
+                    </div>
+
+                    <form id="add-mate-form" onsubmit="handleAddMate(event)" class="space-y-4">
+                        <!-- İsim / Lakap -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                                İsim / Lakap <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="text" id="input-name" required placeholder="Örn: Üst Ranza Berkecan"
+                                class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition">
+                        </div>
+
+                        <!-- Blok ve Oda No / Ranza -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                                Blok - Oda No / Ranza <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="text" id="input-room" required placeholder="Örn: B Blok - 402 / Üst Ranza"
+                                class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition">
+                        </div>
+
+                        <!-- Şu An Ne Yapıyor? -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                                Şu An Ne Yapıyor? (Anlık Eylem)
+                            </label>
+                            <select id="input-activity" onchange="updateLiveRecommendationPreview()"
+                                class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition">
+                                <option value="Reels kaydırıyor">📱 3 saattir Reels / TikTok kaydırıyor</option>
+                                <option value="Kettle'da makarna haşlıyor">🍜 Kettle'da makarna / sosis haşlıyor</option>
+                                <option value="LoL'de tilt olmuş">🎮 LoL'de 5 maçtır lose streak'te (Tilt)</option>
+                                <option value="Tavana bakıyor">👀 Tavana bakıp varoluşsal sancı çekiyor</option>
+                                <option value="Kantine indi">🥪 Kantine indi 2 saattir dönmedi</option>
+                                <option value="Uyuyor taklidi yapıyor">🎧 Kulaklık takıp uyuyor taklidi yapıyor</option>
+                                <option value="Çamaşır sırası bekliyor">🧺 Çamaşırhanede makine nöbetinde</option>
+                                <option value="Okey 4.sü arıyor">🎲 Koridorda okey 4.sü arıyor</option>
+                            </select>
+                        </div>
+
+                        <!-- Yetenek / Bölüm -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                                Yetenek / Bölüm
+                            </label>
+                            <select id="input-skill" onchange="updateLiveRecommendationPreview()"
+                                class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 transition">
+                                <option value="Bilgisayar Müh.">💻 Bilgisayar Müh. (StackOverflow Kopyacısı)</option>
+                                <option value="İstatistik">📊 İstatistik / Mat (SPSS & Tablo Ustası)</option>
+                                <option value="Sözelci / Laf Cambazı">🗣️ Sözelci / Laf Cambazı (1 Sayfayı 10 Yapar)</option>
+                                <option value="Excel Büyücüsü">📗 Endüstri / Excel Büyücüsü</option>
+                                <option value="Sadece Nefes Alıyor">🫁 Sadece Nefes Alıyor (Tam Amele Adayı)</option>
+                                <option value="Ekonomi / Pazarlıkçı">🧾 İktisat / İşletme (Fatura & Bütçe Kurdu)</option>
+                                <option value="Elektrik-Elektronik">⚡ Elektrik-Elektronik (Kablo & Lehimci)</option>
+                            </select>
+                        </div>
+
+                        <!-- Boşluk Seviyesi Slider -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                    Boşluk Seviyesi
+                                </label>
+                                <span id="idle-slider-label" class="text-xs font-bold px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-500">
+                                    %80 - Ranzayla Bütünleşmiş
+                                </span>
+                            </div>
+                            <input type="range" id="input-idle" min="10" max="100" step="5" value="80"
+                                oninput="updateIdleSliderUI(this.value)"
+                                class="w-full accent-rose-500 cursor-pointer h-2 bg-slate-200 dark:bg-slate-800 rounded-lg">
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                                <span>%10 (Arada Derse Gider)</span>
+                                <span>%100 (Kadrolu Demirbaş)</span>
+                            </div>
+                        </div>
+
+                        <!-- Canlı TÜBİTAK Öneri Kutusu -->
+                        <div class="p-3.5 rounded-xl bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/20 space-y-1.5">
+                            <div class="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>TÜBİTAK Algoritması Önerisi:</span>
+                            </div>
+                            <p id="preview-role-title" class="text-xs font-semibold text-slate-800 dark:text-slate-100">
+                                İş Paketi 2: Kodlama / Bug Fix & Gece Nöbeti
+                            </p>
+                            <p id="preview-role-reason" class="text-[11px] text-slate-500 dark:text-slate-400 italic">
+                                "Başparmağı kaydırmaya alışkın ama mühendis; gece 4'te bug çözmeye kilitlenebilir."
+                            </p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                            class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-rose-600 to-orange-500 hover:from-rose-500 hover:to-orange-400 text-white shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2 transition transform active:scale-[0.99]">
+                            <i class="fa-solid fa-radar"></i>
+                            <span>Radara Ekle & İş Paketi Ata</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TÜBİTAK 2209-A İş Paketleri Doluluk Özeti -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-briefcase text-indigo-500"></i>
+                                TÜBİTAK İş Paketleri Dağılımı
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Hangi iş paketinde kaç KYK'lı ter döküyor?</p>
+                        </div>
+                    </div>
+                    <div id="work-packages-summary" class="space-y-2.5">
+                        <!-- JS ile doldurulacak -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- SAĞ SÜTUN: Filtreler ve Eleman Kartları Grid (8 Cols on LG) -->
+            <section class="lg:col-span-8 space-y-5">
+
+                <!-- Arama ve Filtreleme Barı -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                        <!-- Search Input -->
+                        <div class="sm:col-span-5 relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="filter-search" oninput="renderMates()" placeholder="İsim, oda no veya eylem ara..."
+                                class="w-full pl-9 pr-3.5 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="sm:col-span-3">
+                            <select id="filter-status" onchange="renderMates()"
+                                class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                                <option value="ALL">Tüm Durumlar</option>
+                                <option value="IDLE">🛌 Sadece Boştakiler (Yatanlar)</option>
+                                <option value="WORKING">🔬 TÜBİTAK'ta Çalışanlar</option>
+                            </select>
+                        </div>
+
+                        <!-- Work Package Filter -->
+                        <div class="sm:col-span-4">
+                            <select id="filter-package" onchange="renderMates()"
+                                class="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                                <option value="ALL">Tüm İş Paketleri (İP 1-6)</option>
+                                <option value="IP1">İP-1: Literatür & PDF İndirme</option>
+                                <option value="IP2">İP-2: Kodlama & Gece Nöbeti</option>
+                                <option value="IP3">İP-3: Anket & Veri Girişi (Amelelik)</option>
+                                <option value="IP4">İP-4: Rapor Formatlama (Kenar Boşluğu)</option>
+                                <option value="IP5">İP-5: Çay/Kahve & Moral Lojistiği</option>
+                                <option value="IP6">İP-6: Fatura/Bütçe & Kırtasiye</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eleman Kartları Grid -->
+                <div id="mates-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- JS ile doldurulacak -->
+                </div>
+
+                <!-- Boş Sonuç Durumu -->
+                <div id="empty-state" class="hidden bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl p-12 text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fa-solid fa-person-circle-question"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-slate-800 dark:text-slate-200">Bu kriterde KYK'lı bulunamadı!</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+                        Herkes yemekhaneye inmiş olabilir veya filtreleri çok daralttın. Filtreleri sıfırlamayı ya da sol taraftan yeni bir oda arkadaşı eklemeyi dene.
+                    </p>
+                    <button onclick="resetFilters()" class="mt-4 px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-500 transition">
+                        Filtreleri Sıfırla
+                    </button>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-8 border-t border-slate-200 dark:border-slate-800/80 text-center text-xs text-slate-400 dark:text-slate-500">
+        <p>
+            <i class="fa-solid fa-flask text-rose-500 mr-1"></i>
+            <strong>KYK -> TÜBİTAK 2209-A İstihdam Merkezi</strong> • "Bilim, kettle başında makarna haşlayanların omuzlarında yükselecek!"
+        </p>
+    </footer>
+
+    <!-- Uygulama JavaScript Mantığı -->
+    <script>
+        // ==========================================
+        // 1. TÜBİTAK İŞ PAKETLERİ TANIMLARI
+        // ==========================================
+        const WORK_PACKAGES = {
+            IP1: {
+                id: 'IP1',
+                shortName: 'İP-1: Literatür & PDF',
+                fullName: 'İş Paketi 1: Literatür Taraması ve PDF İndirme',
+                icon: 'fa-book-journal-whills',
+                color: 'blue',
+                badgeClass: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
+            },
+            IP2: {
+                id: 'IP2',
+                shortName: 'İP-2: Kodlama & Gece Nöbeti',
+                fullName: 'İş Paketi 2: Kodlama / Bug Fix & Gece Nöbeti',
+                icon: 'fa-terminal',
+                color: 'emerald',
+                badgeClass: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+            },
+            IP3: {
+                id: 'IP3',
+                shortName: 'İP-3: Anket & Veri Ameleliği',
+                fullName: 'İş Paketi 3: Anket Doldurtma & Veri Girişi (Amelelik)',
+                icon: 'fa-clipboard-list',
+                color: 'amber',
+                badgeClass: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+            },
+            IP4: {
+                id: 'IP4',
+                shortName: 'İP-4: Rapor Formatlama',
+                fullName: 'İş Paketi 4: TÜBİTAK Rapor Formatlama (Kenar Boşluğu)',
+                icon: 'fa-file-word',
+                color: 'purple',
+                badgeClass: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
+            },
+            IP5: {
+                id: 'IP5',
+                shortName: 'İP-5: Çay/Kahve Lojistiği',
+                fullName: 'İş Paketi 5: Çay/Kahve Lojistiği ve Moral Motivasyon',
+                icon: 'fa-mug-hot',
+                color: 'rose',
+                badgeClass: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
+            },
+            IP6: {
+                id: 'IP6',
+                shortName: 'İP-6: Fatura & Kırtasiye',
+                fullName: 'İş Paketi 6: Fatura/Bütçe Takibi ve Kırtasiye İşleri',
+                icon: 'fa-receipt',
+                color: 'cyan',
+                badgeClass: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20'
+            }
+        };
+
+        // Eylem İkonları
+        const ACTIVITY_ICONS = {
+            "Reels kaydırıyor": "fa-mobile-screen-button text-pink-500",
+            "Kettle'da makarna haşlıyor": "fa-fire-burner text-orange-500",
+            "LoL'de tilt olmuş": "fa-headset text-red-500",
+            "Tavana bakıyor": "fa-eye text-indigo-400",
+            "Kantine indi": "fa-burger text-amber-500",
+            "Uyuyor taklidi yapıyor": "fa-bed text-slate-400",
+            "Çamaşır sırası bekliyor": "fa-shirt text-sky-500",
+            "Okey 4.sü arıyor": "fa-dice text-emerald-500"
+        };
+
+        // ==========================================
+        // 2. AKILLI TÜBİTAK EŞLEŞTİRME MOTORU
+        // ==========================================
+        function recommendWorkPackage(activity, skill, idlePercent) {
+            let roleId = 'IP3';
+            let reason = 'Genel koğuş iş gücü açığını kapatmak için ideal.';
+
+            if (skill === 'Bilgisayar Müh.' || skill === 'Elektrik-Elektronik') {
+                roleId = 'IP2';
+                if (activity === "LoL'de tilt olmuş") {
+                    reason = "Zaten sabaha kadar uyumayıp klavye yumrukluyor, o enerjiyi gece 4'te bug çözmeye kanalize edebiliriz.";
+                } else {
+                    reason = "StackOverflow'dan kod kopyalama kabiliyeti yüksek, teknik geliştirme paketine direkt kilitlenmeli.";
+                }
+            } else if (activity === "Kettle'da makarna haşlıyor") {
+                roleId = 'IP5';
+                reason = "Kettle ve sıcak su hakimiyeti üst düzey. Gece 3'te 3'ü 1 arada kahve ve noodle lojistiğini tek başına yönetir.";
+            } else if (skill === 'Ekonomi / Pazarlıkçı') {
+                roleId = 'IP6';
+                reason = "Kırtasiyeden kaşeli fatura alma ve TÜBİTAK bütçesini kuruşu kuruşuna denkleştirme konusunda doğuştan yetenekli.";
+            } else if (skill === 'İstatistik' || skill === 'Excel Büyücüsü') {
+                roleId = 'IP4';
+                reason = "TÜBİTAK'ın 'Times New Roman 11 punto, 2.5 cm kenar boşluğu' işkencesine ve tablo kaymalarına dayanabilecek tek kişi.";
+            } else if (skill === 'Sözelci / Laf Cambazı' || activity === 'Reels kaydırıyor' || activity === 'Tavana bakıyor') {
+                roleId = 'IP1';
+                reason = "Başparmağı ekranda kaydırmaya kas hafızasıyla alışkın; Reels yerine Google Scholar'da makale kaydırıp özet çıkarabilir.";
+            } else if (skill === 'Sadece Nefes Alıyor' || activity === 'Kantine indi' || activity === 'Okey 4.sü arıyor') {
+                roleId = 'IP3';
+                reason = "Yemekhane ve kantin kuyruğundaki 300 kişiye zorla Google Forms anketi doldurtmak için biçilmiş kaftan.";
+            } else if (activity === 'Çamaşır sırası bekliyor') {
+                roleId = 'IP4';
+                reason = "Çamaşırhanede 2 saat makine bekleyen adamda peygamber sabrı vardır; APA kaynakça formatını da sabırla düzeltebilir.";
+            }
+
+            // Eğer boşluk seviyesi %95 üstüyse ekstra espri ekle
+            if (Number(idlePercent) >= 95 && roleId !== 'IP5') {
+                reason += " (Not: Ranzayla omurgası kaynaştığı için laptopu kucağına bırakmanız gerekiyor.)";
+            }
+
+            return { roleId, reason };
+        }
+
+        // ==========================================
+        // 3. BAŞLANGIÇ VERİLERİ (PRE-POPULATED KYK'LILAR)
+        // ==========================================
+        let dormMates = [
+            {
+                id: 101,
+                name: "Üst Ranza Berkecan",
+                room: "B Blok - 402 / Üst Ranza",
+                activity: "Reels kaydırıyor",
+                skill: "Sözelci / Laf Cambazı",
+                idleLevel: 95,
+                assignedPackage: "IP1",
+                reason: "Başparmağı dakikada 120 Reels kaydırıyor. Aynı hızla YÖK Tez Merkezi'nden 50 tane PDF indirebilir.",
+                isWorking: false
+            },
+            {
+                id: 102,
+                name: "Kettle Fısıldayan Mahmut",
+                room: "B Blok - 402 / Dolap Yanı",
+                activity: "Kettle'da makarna haşlıyor",
+                skill: "Sadece Nefes Alıyor",
+                idleLevel: 85,
+                assignedPackage: "IP5",
+                reason: "Güvenlikten gizli 2000W kettle işletiyor. Proje ekibinin gece boyu çay, Nescafe ve bardak çorba tedarik zinciri onda.",
+                isWorking: true
+            },
+            {
+                id: 103,
+                name: "Gold IV Furkan (Tilt)",
+                room: "A Blok - 210 / Cam Kenarı",
+                activity: "LoL'de tilt olmuş",
+                skill: "Bilgisayar Müh.",
+                idleLevel: 90,
+                assignedPackage: "IP2",
+                reason: "5 maç üst üste kaybettiği için uyuyamıyor. Sabaha kadar sinirini Python kodundaki bug'lardan çıkarması sağlandı.",
+                isWorking: true
+            },
+            {
+                id: 104,
+                name: "Kenar Boşluğu Bünyamin",
+                room: "B Blok - 404 / Alt Ranza",
+                activity: "Çamaşır sırası bekliyor",
+                skill: "İstatistik",
+                idleLevel: 60,
+                assignedPackage: "IP4",
+                reason: "Word'de tablo kayınca kriz geçirmeyen tek insan. TÜBİTAK 2209-A başvuru formunun punto ve kenar boşlukları ona emanet.",
+                isWorking: false
+            },
+            {
+                id: 105,
+                name: "Kantinci Samet",
+                room: "C Blok - 105 / Kapı Girişi",
+                activity: "Okey 4.sü arıyor",
+                skill: "Sadece Nefes Alıyor",
+                idleLevel: 100,
+                assignedPackage: "IP3",
+                reason: "Blokta tanımadığı kimse yok. Okey masasında taş çalarken herkese zorla 45 soruluk proje anketini doldurtabilir.",
+                isWorking: false
+            },
+            {
+                id: 106,
+                name: "İktisatçı Emre (Faturacı)",
+                room: "B Blok - 402 / Alt Ranza",
+                activity: "Tavana bakıyor",
+                skill: "Ekonomi / Pazarlıkçı",
+                idleLevel: 75,
+                assignedPackage: "IP6",
+                reason: "Kyk kredisini 3 farklı banka kampanyasıyla çeviriyor. Proje bütçesini ve kırtasiye faturalarını sıfır hatayla kapatır.",
+                isWorking: false
+            }
+        ];
+
+        // ==========================================
+        // 4. SAYFA YÜKLENDİĞİNDE ÇALIŞACAKLAR
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            updateLiveRecommendationPreview();
+            renderAll();
+        });
+
+        function renderAll() {
+            renderStats();
+            renderWorkPackagesSummary();
+            renderMates();
+        }
+
+        // ==========================================
+        // 5. İSTATİSTİKLER VE İŞ PAKETİ ÖZETİ
+        // ==========================================
+        function renderStats() {
+            const total = dormMates.length;
+            const workingCount = dormMates.filter(m => m.isWorking).length;
+            const idleCount = total - workingCount;
+
+            document.getElementById('stat-idle-count').textContent = idleCount;
+            document.getElementById('stat-working-count').textContent = workingCount;
+
+            const idleSub = document.getElementById('stat-idle-sub');
+            if (idleCount === 0 && total > 0) {
+                idleSub.innerHTML = `<i class="fa-solid fa-check-double text-emerald-500"></i> Ranzada tek kişi kalmadı!`;
+            } else {
+                idleSub.innerHTML = `<i class="fa-solid fa-bed text-amber-500"></i> Ranzalar şu an dolu`;
+            }
+
+            // Açık İş Paketleri (Aktif çalışanı olmayan paket sayısı)
+            const activePackages = new Set(dormMates.filter(m => m.isWorking).map(m => m.assignedPackage));
+            const openPackageCount = 6 - activePackages.size;
+            document.getElementById('stat-open-packages').textContent = `${openPackageCount} / 6`;
+
+            const pkgSub = document.getElementById('stat-packages-sub');
+            if (openPackageCount === 0) {
+                pkgSub.innerHTML = `<i class="fa-solid fa-trophy text-emerald-500"></i> Tüm iş paketleri tam kadro!`;
+            } else {
+                pkgSub.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-indigo-500"></i> ${openPackageCount} pakette aktif çalışan yok`;
+            }
+
+            // Verimlilik Hesabı
+            const productivity = total === 0 ? 0 : Math.round((workingCount / total) * 100);
+            const badge = document.getElementById('stat-productivity-badge');
+            const bar = document.getElementById('stat-productivity-bar');
+            const text = document.getElementById('stat-productivity-text');
+
+            badge.textContent = `%${productivity}`;
+            bar.style.width = `${productivity}%`;
+
+            if (productivity < 30) {
+                badge.className = "text-xs font-bold px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-500";
+                text.textContent = "Koğuş kış uykusunda, sadece kettle çalışıyor...";
+            } else if (productivity < 75) {
+                badge.className = "text-xs font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500";
+                text.textContent = "Proje kıpırdandı, makaleler inmeye başladı!";
+            } else {
+                badge.className = "text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500";
+                text.textContent = "Oda CERN laboratuvarına döndü, TÜBİTAK şokta!";
+            }
+        }
+
+        function renderWorkPackagesSummary() {
+            const container = document.getElementById('work-packages-summary');
+            container.innerHTML = Object.values(WORK_PACKAGES).map(pkg => {
+                const assignedAll = dormMates.filter(m => m.assignedPackage === pkg.id);
+                const activeWorking = assignedAll.filter(m => m.isWorking);
+
+                return `
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-8 h-8 rounded-lg ${pkg.badgeClass} border flex items-center justify-center shrink-0 text-xs">
+                                <i class="fa-solid ${pkg.icon}"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${pkg.shortName}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                                    Atanan: <strong>${assignedAll.length}</strong> • Çalışan: <strong class="text-emerald-500">${activeWorking.length}</strong>
+                                </p>
+                            </div>
+                        </div>
+                        <span class="shrink-0 text-[11px] font-semibold px-2 py-1 rounded-lg ${
+                            activeWorking.length > 0
+                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                                : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                        }">
+                            ${activeWorking.length > 0 ? 'Aktif' : 'Boş'}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // 6. ELEMAN KARTLARINI LİSTELEME (GRID)
+        // ==========================================
+        function renderMates() {
+            const searchVal = document.getElementById('filter-search').value.toLowerCase().trim();
+            const statusVal = document.getElementById('filter-status').value;
+            const packageVal = document.getElementById('filter-package').value;
+
+            const filtered = dormMates.filter(mate => {
+                const matchesSearch =
+                    mate.name.toLowerCase().includes(searchVal) ||
+                    mate.room.toLowerCase().includes(searchVal) ||
+                    mate.activity.toLowerCase().includes(searchVal) ||
+                    mate.skill.toLowerCase().includes(searchVal);
+
+                const matchesStatus =
+                    statusVal === 'ALL' ||
+                    (statusVal === 'IDLE' && !mate.isWorking) ||
+                    (statusVal === 'WORKING' && mate.isWorking);
+
+                const matchesPackage =
+                    packageVal === 'ALL' || mate.assignedPackage === packageVal;
+
+                return matchesSearch && matchesStatus && matchesPackage;
+            });
+
+            const grid = document.getElementById('mates-grid');
+            const emptyState = document.getElementById('empty-state');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(mate => {
+                const pkg = WORK_PACKAGES[mate.assignedPackage] || WORK_PACKAGES.IP3;
+                const actIcon = ACTIVITY_ICONS[mate.activity] || "fa-user-clock text-slate-400";
+
+                // Boşluk bar rengi
+                let idleBarColor = "bg-emerald-500";
+                if (mate.idleLevel >= 80) idleBarColor = "bg-rose-500";
+                else if (mate.idleLevel >= 50) idleBarColor = "bg-amber-500";
+
+                return `
+                    <div class="card-transition bg-white dark:bg-slate-900 border ${
+                        mate.isWorking
+                            ? 'border-emerald-500/40 dark:border-emerald-500/40 ring-1 ring-emerald-500/10'
+                            : 'border-slate-200 dark:border-slate-800'
+                    } rounded-2xl p-5 shadow-sm flex flex-col justify-between relative overflow-hidden">
+
+                        <!-- Üst Kısım: İsim, Oda ve Durum Rozeti -->
+                        <div>
+                            <div class="flex items-start justify-between gap-2 mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-11 h-11 rounded-xl ${
+                                        mate.isWorking
+                                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                            : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                                    } flex items-center justify-center text-lg shrink-0">
+                                        <i class="fa-solid ${mate.isWorking ? 'fa-user-astronaut' : 'fa-bed'}"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-base text-slate-900 dark:text-white leading-tight">${escapeHtml(mate.name)}</h3>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                                            <i class="fa-solid fa-door-open text-[10px]"></i> ${escapeHtml(mate.room)}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Durum Pill + Sil Butonu -->
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 ${
+                                        mate.isWorking
+                                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                                            : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                                    }">
+                                        <span class="w-1.5 h-1.5 rounded-full ${mate.isWorking ? 'bg-emerald-500 animate-ping' : 'bg-amber-500'}"></span>
+                                        ${mate.isWorking ? "TÜBİTAK'ta Çalışıyor" : "Boşta (Yatıyor)"}
+                                    </span>
+                                    <button onclick="removeMate(${mate.id})" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg transition" title="Odadan Şutla (Sil)">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Anlık Eylem ve Bölüm Etiketleri -->
+                            <div class="flex flex-wrap gap-1.5 mb-3.5">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                    <i class="fa-solid ${actIcon}"></i>
+                                    ${escapeHtml(mate.activity)}
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    ${escapeHtml(mate.skill)}
+                                </span>
+                            </div>
+
+                            <!-- Boşluk Seviyesi Barı -->
+                            <div class="mb-3.5">
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="text-slate-500 dark:text-slate-400 font-medium">Anlık Boşluk Oranı</span>
+                                    <span class="font-bold ${mate.isWorking ? 'text-emerald-500 line-through opacity-60' : 'text-slate-700 dark:text-slate-200'}">%${mate.idleLevel}</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="${mate.isWorking ? 'bg-emerald-500' : idleBarColor} h-full rounded-full transition-all duration-500" style="width: ${mate.isWorking ? '15' : mate.idleLevel}%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Algoritma Teşhisi -->
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/90 border border-slate-200/70 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 italic mb-4">
+                                <i class="fa-solid fa-quote-left text-slate-300 dark:text-slate-700 mr-1"></i>
+                                ${escapeHtml(mate.reason)}
+                            </div>
+                        </div>
+
+                        <!-- Alt Kısım: İş Paketi Seçimi & Aksiyon Butonu -->
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-2.5">
+                            <div>
+                                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                                    Atanan TÜBİTAK İş Paketi
+                                </label>
+                                <select onchange="changeMatePackage(${mate.id}, this.value)"
+                                    class="w-full px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                                    ${Object.values(WORK_PACKAGES).map(p => `
+                                        <option value="${p.id}" ${mate.assignedPackage === p.id ? 'selected' : ''}>
+                                            ${p.fullName}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                            </div>
+
+                            <!-- Projeye Kilitle / Serbest Bırak Butonu -->
+                            <button onclick="toggleMateStatus(${mate.id})"
+                                class="w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-sm ${
+                                    mate.isWorking
+                                        ? 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200'
+                                        : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
+                                }">
+                                <i class="fa-solid ${mate.isWorking ? 'fa-bed' : 'fa-bolt'}"></i>
+                                <span>${mate.isWorking ? 'Ranzaya Geri Gönder (Mola Ver)' : 'Yataktan Kaldır & Projeye Kilitle!'}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // 7. KULLANICI ETKİLEŞİMLERİ & FORM İŞLEMLERİ
+        // ==========================================
+        function updateIdleSliderUI(val) {
+            const label = document.getElementById('idle-slider-label');
+            let desc = "Canı Sıkılıyor";
+            if (val >= 90) desc = "Ranzayla Bütünleşmiş";
+            else if (val >= 70) desc = "Tam Kıvamında Boş";
+            else if (val >= 40) desc = "Yarı Zamanlı Aylak";
+            else desc = "Arada Derse Gidiyor";
+
+            label.textContent = `%${val} - ${desc}`;
+            updateLiveRecommendationPreview();
+        }
+
+        function updateLiveRecommendationPreview() {
+            const activity = document.getElementById('input-activity').value;
+            const skill = document.getElementById('input-skill').value;
+            const idle = document.getElementById('input-idle').value;
+
+            const rec = recommendWorkPackage(activity, skill, idle);
+            const pkg = WORK_PACKAGES[rec.roleId];
+
+            document.getElementById('preview-role-title').textContent = pkg.fullName;
+            document.getElementById('preview-role-reason').textContent = `"${rec.reason}"`;
+        }
+
+        function handleAddMate(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('input-name');
+            const roomInput = document.getElementById('input-room');
+            const activity = document.getElementById('input-activity').value;
+            const skill = document.getElementById('input-skill').value;
+            const idleLevel = parseInt(document.getElementById('input-idle').value, 10);
+
+            const rec = recommendWorkPackage(activity, skill, idleLevel);
+
+            const newMate = {
+                id: Date.now(),
+                name: nameInput.value.trim(),
+                room: roomInput.value.trim(),
+                activity,
+                skill,
+                idleLevel,
+                assignedPackage: rec.roleId,
+                reason: rec.reason,
+                isWorking: false
+            };
+
+            dormMates.unshift(newMate);
+            nameInput.value = '';
+            roomInput.value = '';
+
+            renderAll();
+            showToast(
+                `${newMate.name} radara eklendi!`,
+                `Algoritma tarafından "${WORK_PACKAGES[rec.roleId].shortName}" paketine aday gösterildi.`,
+                'indigo'
+            );
+        }
+
+        function fillRandomDormMate() {
+            const randomNames = [
+                "Ranza Kralı Çağatay",
+                "Üst Kat Semih",
+                "Nöbetçi Öğrenci Mert",
+                "Vize Mağduru Kerem",
+                "Yemekhane Gurmesi Ali",
+                "Kulaklıklı Oğuzhan",
+                "Kyk Wi-Fi Avcısı Burak"
+            ];
+            const randomRooms = [
+                "A Blok - 102 / Üst Ranza",
+                "C Blok - 309 / Kalorifer Yanı",
+                "B Blok - 501 / Cam Kenarı",
+                "D Blok - 204 / Kapı Ağzı",
+                "B Blok - 402 / Orta Ranza"
+            ];
+            const activities = [
+                "Reels kaydırıyor",
+                "Kettle'da makarna haşlıyor",
+                "LoL'de tilt olmuş",
+                "Tavana bakıyor",
+                "Kantine indi",
+                "Uyuyor taklidi yapıyor",
+                "Çamaşır sırası bekliyor",
+                "Okey 4.sü arıyor"
+            ];
+            const skills = [
+                "Bilgisayar Müh.",
+                "İstatistik",
+                "Sözelci / Laf Cambazı",
+                "Excel Büyücüsü",
+                "Sadece Nefes Alıyor",
+                "Ekonomi / Pazarlıkçı",
+                "Elektrik-Elektronik"
+            ];
+
+            document.getElementById('input-name').value = randomNames[Math.floor(Math.random() * randomNames.length)];
+            document.getElementById('input-room').value = randomRooms[Math.floor(Math.random() * randomRooms.length)];
+            document.getElementById('input-activity').value = activities[Math.floor(Math.random() * activities.length)];
+            document.getElementById('input-skill').value = skills[Math.floor(Math.random() * skills.length)];
+
+            const randomIdle = (Math.floor(Math.random() * 10) + 10) * 5; // 50 - 100 arası
+            document.getElementById('input-idle').value = randomIdle;
+            updateIdleSliderUI(randomIdle);
+        }
+
+        function toggleMateStatus(id) {
+            const mate = dormMates.find(m => m.id === id);
+            if (!mate) return;
+
+            mate.isWorking = !mate.isWorking;
+            const pkg = WORK_PACKAGES[mate.assignedPackage];
+
+            renderAll();
+
+            if (mate.isWorking) {
+                showToast(
+                    `${mate.name} yataktan kaldırıldı! 🚀`,
+                    `Şu an "${pkg.shortName}" iş paketinde TÜBİTAK için ter döküyor.`,
+                    'emerald'
+                );
+            } else {
+                showToast(
+                    `${mate.name} ranzasına geri döndü 🛌`,
+                    `Tekrar "${mate.activity}" moduna geçiş yaptı.`,
+                    'amber'
+                );
+            }
+        }
+
+        function changeMatePackage(id, newPkgId) {
+            const mate = dormMates.find(m => m.id === id);
+            if (!mate) return;
+
+            mate.assignedPackage = newPkgId;
+            const pkg = WORK_PACKAGES[newPkgId];
+
+            renderAll();
+            showToast(
+                `Görev Yeri Değiştirildi!`,
+                `${mate.name} artık "${pkg.shortName}" paketine atandı.`,
+                'indigo'
+            );
+        }
+
+        function removeMate(id) {
+            const index = dormMates.findIndex(m => m.id === id);
+            if (index === -1) return;
+            const removed = dormMates[index];
+            dormMates.splice(index, 1);
+            renderAll();
+            showToast(
+                `${removed.name} odadan şutlandı!`,
+                `Artık projenin veya odanın bir parçası değil.`,
+                'rose'
+            );
+        }
+
+        function mobilizeAllIdle() {
+            const idleMates = dormMates.filter(m => !m.isWorking);
+            if (idleMates.length === 0) {
+                showToast(
+                    "Koğuş Zaten Tam Kadro Çalışıyor!",
+                    "Ranzada yatan tek bir kişi bile kalmadı, herkes bilgisayar başında.",
+                    "emerald"
+                );
+                return;
+            }
+
+            idleMates.forEach(m => m.isWorking = true);
+            renderAll();
+            showToast(
+                `KOĞUŞ KALK! (${idleMates.length} Kişi Projeye Kilitlendi)`,
+                "Kettle fişleri çekildi, telefonlar toplandı, herkes TÜBİTAK iş paketlerine dağıtıldı!",
+                "emerald"
+            );
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-search').value = '';
+            document.getElementById('filter-status').value = 'ALL';
+            document.getElementById('filter-package').value = 'ALL';
+            renderMates();
+        }
+
+        // ==========================================
+        // 8. WHATSAPP GÖREV EMRİ ÇIKTISI MODAL
+        // ==========================================
+        function openSummaryModal() {
+            const modal = document.getElementById('summary-modal');
+            const pre = document.getElementById('summary-text');
+
+            const workingCount = dormMates.filter(m => m.isWorking).length;
+            let lines = [
+                "🚨 *TÜBİTAK 2209-A KOĞUŞ SEFERBERLİK EMRİ* 🚨",
+                `📅 Durum: ${workingCount}/${dormMates.length} Eleman Aktif Çalışıyor`,
+                "----------------------------------------"
+            ];
+
+            Object.values(WORK_PACKAGES).forEach(pkg => {
+                const assigned = dormMates.filter(m => m.assignedPackage === pkg.id);
+                lines.push(`\n📌 *${pkg.fullName}*`);
+                if (assigned.length === 0) {
+                    lines.push("   ⚠️ _Bu pakette henüz amele yok!_");
+                } else {
+                    assigned.forEach(m => {
+                        const statusIcon = m.isWorking ? "✅ [ÇALIŞIYOR]" : "💤 [YATIYOR - " + m.activity + "]";
+                        lines.push(`   • *${m.name}* (${m.room}) -> ${statusIcon}`);
+                    });
+                }
+            });
+
+            lines.push("\n----------------------------------------");
+            lines.push("⚠️ _Not: Rapor teslimine kadar kettle'da makarna haşlamak ve 3 saatten fazla Reels kaydırmak yasaklanmıştır._");
+
+            pre.textContent = lines.join('\n');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeSummaryModal() {
+            const modal = document.getElementById('summary-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copySummaryToClipboard() {
+            const text = document.getElementById('summary-text').textContent;
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            showToast(
+                "Görev Emri Kopyalandı! 📋",
+                "WhatsApp oda grubuna direkt yapıştırabilirsin.",
+                "emerald"
+            );
+        }
+
+        // ==========================================
+        // 9. BİLDİRİM (TOAST) & TEMA YARDIMCILARI
+        // ==========================================
+        function showToast(title, message, color = 'emerald') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const colorStyles = {
+                emerald: 'border-emerald-500/40 bg-white dark:bg-slate-900 text-emerald-500',
+                amber: 'border-amber-500/40 bg-white dark:bg-slate-900 text-amber-500',
+                indigo: 'border-indigo-500/40 bg-white dark:bg-slate-900 text-indigo-500',
+                rose: 'border-rose-500/40 bg-white dark:bg-slate-900 text-rose-500'
+            };
+
+            const icons = {
+                emerald: 'fa-circle-check',
+                amber: 'fa-bed',
+                indigo: 'fa-wand-magic-sparkles',
+                rose: 'fa-bell'
+            };
+
+            toast.className = `pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 ${colorStyles[color] || colorStyles.emerald}`;
+            toast.innerHTML = `
+                <div class="text-lg mt-0.5 shrink-0">
+                    <i class="fa-solid ${icons[color] || icons.emerald}"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-bold text-slate-900 dark:text-white">${escapeHtml(title)}</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">${escapeHtml(message)}</p>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 3400);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = 'fa-solid fa-moon text-slate-700';
+            } else {
+                html.classList.add('dark');
+                icon.className = 'fa-solid fa-sun text-amber-400';
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
 </body>
 </html>
